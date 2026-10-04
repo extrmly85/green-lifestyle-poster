@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explainable Green Lifestyle Intelligence Platform</title>
+<style>
+:root{
+  --bg:#F6F8FC; --card:#FFFFFF; --ink:#1B2740; --muted:#5B6B86; --line:#D3DBE8;
+  --teal:#1D9E75; --teal-ink:#0F6E56; --purple:#7F77DD; --btn:#1B2740; --btn-ink:#FFFFFF;
+}
+@media (prefers-color-scheme:dark){
+  :root{ --bg:#0B1220; --card:#111A2E; --ink:#E6EDF7; --muted:#9FB0CC; --line:#26324D;
+         --teal-ink:#7FD6B5; --btn:#E6EDF7; --btn-ink:#0B1220; }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.55 "Segoe UI",Arial,"Liberation Sans",Helvetica,sans-serif}
+main{max-width:640px;margin:0 auto;padding:32px 20px 56px}
+h1{font:600 clamp(27px,7vw,36px)/1.15 Georgia,"Iowan Old Style","Times New Roman",serif;margin:0 0 14px;letter-spacing:-.01em}
+h2{font-size:18px;margin:36px 0 12px}
+.layers{display:flex;gap:4px;margin:0 0 18px}
+.layers i{height:5px;flex:1;border-radius:3px;background:var(--teal)}
+.layers i:nth-child(1),.layers i:nth-child(5){background:var(--muted)}
+.layers i:nth-child(4){background:var(--purple)}
+.lead{color:var(--muted);margin:0 0 24px;max-width:60ch}
+.links{display:grid;gap:10px}
+.links a{display:block;padding:14px 16px;border-radius:10px;background:var(--btn);color:var(--btn-ink);
+  text-decoration:none;font-weight:600}
+.links a small{display:block;font-weight:400;opacity:.8;font-size:14px}
+a:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 16px}
+.person{padding:12px 0;border-bottom:1px solid var(--line)}
+.person:last-child{border-bottom:0}
+.person b{display:block}
+.person span{color:var(--muted);font-size:14px}
+.person a{color:var(--teal-ink)}
+dl{margin:0}
+.fact{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.fact:last-child{border-bottom:0}
+dt{font-weight:600} dd{margin:0;color:var(--muted)}
+img{width:100%;height:auto;border-radius:10px;border:1px solid var(--line);display:block}
+@media(max-width:420px){.fact{grid-template-columns:1fr;gap:2px}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <div class="layers" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <h1 id="title"></h1>
+  <p class="lead" id="summary"></p>
+
+  <div class="links" id="links"></div>
+
+  <section id="team-sec"><h2>Team</h2><div class="card" id="team"></div></section>
+  <section id="facts-sec"><h2>Project details</h2><div class="card"><dl id="facts"></dl></div></section>
+  <section id="diagram-sec"><h2>System architecture</h2><img id="diagram" alt="Five-layer system architecture: data, preprocessing, modelling, intelligence, application"></section>
+</main>
+
+<script>
+/* ---- Edit this block only. Empty values are hidden automatically. ---- */
+const CONFIG = {
+  title: "An Explainable Green Lifestyle Intelligence Platform for Carbon Footprint Prediction and Sustainable Decision-Making",
+  summary: "Enter your lifestyle details and get an estimate of your carbon footprint, a plain explanation of what drives it, and ways to reduce it.",
+  links: [
+    { label: "Source code on GitHub", note: "Notebook, dataset and web app", url: "https://github.com/Srujan613/Carbon-Footprint-Prediction-" },
+    { label: "Read the paper", note: "", url: "" },
+    { label: "Try the live demo", note: "", url: "" }
+  ],
+  team: [
+    { name: "Sudhanwa", srn: "PES2UG24CS531, dataset preparation and model development", email: "" },
+    { name: "Srujan Yalla", srn: "PES2UG24CS527, explainability and recommendations", email: "" }
+  ],
+  guide: { name: "", email: "" },
+  facts: [
+    ["Data", "10,000 lifestyle records with 19 features"],
+    ["Models", "Ridge, Random forest, XGBoost, LightGBM and CatBoost, plus a stacking ensemble"],
+    ["Result", "The tuned CatBoost model reaches an R² of about 0.99 with roughly 3% average error"],
+    ["Explanations", "SHAP shows which of your inputs raise or lower your footprint"],
+    ["Archetypes", "KMeans groups people into lifestyle types"],
+    ["Advice", "What-if tests show how much each change could save"],
+    ["Built with", "Python, scikit-learn, Optuna and Flask"]
+  ],
+  diagram: "architecture_diagram_light.png"
+};
+/* ---------------------------------------------------------------------- */
+
+const $ = id => document.getElementById(id);
+const el = (tag, props = {}, kids = []) => {
+  const n = Object.assign(document.createElement(tag), props);
+  kids.forEach(k => n.append(k));
+  return n;
+};
+
+$("title").textContent = CONFIG.title;
+$("summary").textContent = CONFIG.summary;
+
+CONFIG.links.filter(l => l.url).forEach(l => {
+  const a = el("a", { href: l.url, target: "_blank", rel: "noopener" }, [l.label]);
+  if (l.note) a.append(el("small", { textContent: l.note }));
+  $("links").append(a);
+});
+
+const people = CONFIG.team.map(p => ({ ...p, role: p.srn }));
+if (CONFIG.guide.name) people.push({ name: CONFIG.guide.name, role: "Project guide", email: CONFIG.guide.email });
+people.forEach(p => {
+  const row = el("div", { className: "person" }, [el("b", { textContent: p.name })]);
+  if (p.role) row.append(el("span", { textContent: p.role }));
+  if (p.email) row.append(el("br"), el("a", { href: "mailto:" + p.email, textContent: p.email }));
+  $("team").append(row);
+});
+if (!people.length) $("team-sec").hidden = true;
+
+CONFIG.facts.forEach(([k, v]) => {
+  $("facts").append(el("div", { className: "fact" }, [el("dt", { textContent: k }), el("dd", { textContent: v })]));
+});
+if (!CONFIG.facts.length) $("facts-sec").hidden = true;
+
+if (CONFIG.diagram) {
+  const img = $("diagram");
+  img.src = CONFIG.diagram;
+  img.onerror = () => { $("diagram-sec").hidden = true; };
+} else $("diagram-sec").hidden = true;
+</script>
+</body>
+</html>
